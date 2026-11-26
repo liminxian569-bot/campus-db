@@ -38,10 +38,10 @@ erDiagram
 
 | 項目 | 版本／說明 |
 |---|---|
-| 資料庫 | Microsoft SQL Server 2019（Express 或 Developer 版皆可，免費） |
+| 資料庫 | Microsoft SQL Server 2019 |
 | 管理工具 | SQL Server Management Studio (SSMS) |
 | 作業系統 | Windows 10／11 |
-| 其他套件 | 無（純 T-SQL，不需 Python 或 requirements.txt） |
+| 其他套件 | 無 |
 
 ## 資料取得方式
 
@@ -58,9 +58,7 @@ erDiagram
 | 2 | `02_create_tables.sql` | 建立 6 張資料表與索引 |
 | 3 | `03_views_procedures.sql` | 建立 View 與 Stored Procedure |
 | 4 | `04_seed_data.sql` | 匯入虛構測試資料 |
-| 5 | `05_demo_queries.sql` | Demo 查詢，建議一段一段反白執行 |
-
-3. 想重置資料時，從步驟 1 重新執行到 4。
+| 5 | `05_demo_queries.sql` | Demo 查詢，一段一段反白執行 |
 
 ## 範例輸出
 
