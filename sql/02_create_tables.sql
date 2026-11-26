@@ -1,24 +1,15 @@
-﻿/* =========================================================
-   02_create_tables.sql
-   建立 6 張資料表（符合 3NF）
-   Users ─< GroupMembers >─ ExpenseGroups      (M:N)
-   ExpenseGroups ─< Expenses ─< ExpenseShares   (1:N, 1:N)
-   ExpenseGroups ─< Settlements                (1:N)
-   ========================================================= */
 USE CampusSplitDB;
 GO
 
--- 1. 使用者
 CREATE TABLE Users (
     user_id     INT IDENTITY(1,1) PRIMARY KEY,
-    student_no  NVARCHAR(20)  NOT NULL UNIQUE,      -- 學號
+    student_no  NVARCHAR(20)  NOT NULL UNIQUE,     
     user_name   NVARCHAR(50)  NOT NULL,
     email       NVARCHAR(100) NULL,
     created_at  DATETIME2     NOT NULL DEFAULT SYSDATETIME()
 );
 GO
 
--- 2. 群組（宿舍／社團／班級）
 CREATE TABLE ExpenseGroups (
     group_id    INT IDENTITY(1,1) PRIMARY KEY,
     group_name  NVARCHAR(50)  NOT NULL,
@@ -28,7 +19,6 @@ CREATE TABLE ExpenseGroups (
 );
 GO
 
--- 3. 群組成員（Users 與 ExpenseGroups 的 M:N 關聯表）
 CREATE TABLE GroupMembers (
     group_id    INT           NOT NULL,
     user_id     INT           NOT NULL,
@@ -41,7 +31,6 @@ CREATE TABLE GroupMembers (
 );
 GO
 
--- 4. 支出（付款人必須是該群組成員：複合外鍵指向 GroupMembers）
 CREATE TABLE Expenses (
     expense_id    INT IDENTITY(1,1) PRIMARY KEY,
     group_id      INT            NOT NULL,
@@ -50,14 +39,13 @@ CREATE TABLE Expenses (
     amount        DECIMAL(10,2)  NOT NULL CONSTRAINT CK_Expenses_Amount CHECK (amount > 0),
     category      NVARCHAR(20)   NOT NULL DEFAULT N'其他',
     expense_date  DATE           NOT NULL,
-    is_recurring  BIT            NOT NULL DEFAULT 0,   -- 期末擴充：週期性帳單
+    is_recurring  BIT            NOT NULL DEFAULT 0,   
     created_at    DATETIME2      NOT NULL DEFAULT SYSDATETIME(),
     CONSTRAINT FK_Expenses_Member FOREIGN KEY (group_id, payer_id)
         REFERENCES GroupMembers(group_id, user_id)
 );
 GO
 
--- 5. 分攤明細（每筆支出每位成員應付多少）
 CREATE TABLE ExpenseShares (
     expense_id    INT           NOT NULL,
     user_id       INT           NOT NULL,
@@ -69,7 +57,6 @@ CREATE TABLE ExpenseShares (
 );
 GO
 
--- 6. 還款紀錄（from 付錢給 to）
 CREATE TABLE Settlements (
     settlement_id  INT IDENTITY(1,1) PRIMARY KEY,
     group_id       INT           NOT NULL,
@@ -85,12 +72,10 @@ CREATE TABLE Settlements (
 );
 GO
 
--- 常用查詢的索引
 CREATE INDEX IX_Expenses_Group_Date ON Expenses(group_id, expense_date);
 CREATE INDEX IX_ExpenseShares_User  ON ExpenseShares(user_id);
 GO
 
--- 確認：列出已建立的資料表與欄位數
 SELECT t.name AS 資料表,
        (SELECT COUNT(*) FROM sys.columns c WHERE c.object_id = t.object_id) AS 欄位數
 FROM sys.tables t
