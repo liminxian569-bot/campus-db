@@ -89,3 +89,10 @@ GO
 CREATE INDEX IX_Expenses_Group_Date ON Expenses(group_id, expense_date);
 CREATE INDEX IX_ExpenseShares_User  ON ExpenseShares(user_id);
 GO
+
+-- 確認：列出已建立的資料表與欄位數
+SELECT t.name AS 資料表,
+       (SELECT COUNT(*) FROM sys.columns c WHERE c.object_id = t.object_id) AS 欄位數
+FROM sys.tables t
+ORDER BY t.create_date;
+GO

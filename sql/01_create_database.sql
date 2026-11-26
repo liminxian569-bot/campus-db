@@ -19,3 +19,9 @@ GO
 
 USE CampusSplitDB;
 GO
+
+-- 確認：資料庫已建立
+SELECT name AS 資料庫名稱, create_date AS 建立時間
+FROM sys.databases
+WHERE name = N'CampusSplitDB';
+GO
